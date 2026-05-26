@@ -65,9 +65,8 @@ services:
     rootDir: .
     buildCommand: pnpm install --frozen-lockfile && pnpm run build:auth
     startCommand: npm run start:auth
-    envVarGroups:
-      - lrc-shared-env
     envVars:
+      - fromGroup: lrc-shared-env
       - key: PORT
         value: "3001"
 
@@ -79,9 +78,8 @@ services:
     rootDir: .
     buildCommand: pnpm install --frozen-lockfile && pnpm run build:admin
     startCommand: npm run start:admin
-    envVarGroups:
-      - lrc-shared-env
     envVars:
+      - fromGroup: lrc-shared-env
       - key: ADMIN_PORT
         value: "3003"
       - key: PORT
@@ -95,8 +93,7 @@ services:
     rootDir: .
     buildCommand: pnpm install --frozen-lockfile && pnpm run build:jrs
     startCommand: npm run start:jrs
-    envVarGroups:
-      - lrc-shared-env
     envVars:
+      - fromGroup: lrc-shared-env
       - key: PORT
         value: "3004"
