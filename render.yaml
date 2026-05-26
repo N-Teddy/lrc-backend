@@ -1,14 +1,14 @@
 databases:
   - name: lrc-postgres
     region: oregon
-    plan: starter
+    plan: free
     databaseName: lrc_db
 
 services:
   - type: web
     name: auth-service
     region: oregon
-    plan: starter
+    plan: free
     runtime: node
     rootDir: .
     buildCommand: pnpm install --frozen-lockfile && pnpm run build:auth
@@ -54,7 +54,7 @@ services:
   - type: web
     name: admin-service
     region: oregon
-    plan: starter
+    plan: free
     runtime: node
     rootDir: .
     buildCommand: pnpm install --frozen-lockfile && pnpm run build:admin
@@ -92,7 +92,7 @@ services:
   - type: web
     name: jrs-service
     region: oregon
-    plan: starter
+    plan: free
     runtime: node
     rootDir: .
     buildCommand: pnpm install --frozen-lockfile && pnpm run build:jrs
