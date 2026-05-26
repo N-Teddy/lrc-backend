@@ -4,20 +4,11 @@ databases:
     plan: free
     databaseName: lrc_db
 
-services:
-  - type: web
-    name: auth-service
-    region: oregon
-    plan: free
-    runtime: node
-    rootDir: .
-    buildCommand: pnpm install --frozen-lockfile && pnpm run build:auth
-    startCommand: npm run start:auth
+envVarGroups:
+  - name: lrc-shared-env
     envVars:
       - key: NODE_ENV
         value: production
-      - key: PORT
-        value: "3001"
       - key: DATABASE_HOST
         fromDatabase:
           name: lrc-postgres
@@ -50,6 +41,35 @@ services:
         sync: false
       - key: JWT_RESET_EXPIRE_AT
         value: "3600"
+      - key: JWT_INVITE_SECRET
+        sync: false
+      - key: EMAIL_HOST
+        value: "smtp.example.com"
+      - key: EMAIL_PORT
+        value: "587"
+      - key: FRONTEND_URL
+        value: "https://yourfrontend.com"
+      - key: CORS_ORIGIN
+        value: "https://yourfrontend.com,http://localhost:3000"
+      - key: DOCS_USERNAME
+        sync: false
+      - key: DOCS_PASSWORD
+        sync: false
+
+services:
+  - type: web
+    name: auth-service
+    region: oregon
+    plan: free
+    runtime: node
+    rootDir: .
+    buildCommand: pnpm install --frozen-lockfile && pnpm run build:auth
+    startCommand: npm run start:auth
+    envVarGroups:
+      - lrc-shared-env
+    envVars:
+      - key: PORT
+        value: "3001"
 
   - type: web
     name: admin-service
@@ -59,35 +79,13 @@ services:
     rootDir: .
     buildCommand: pnpm install --frozen-lockfile && pnpm run build:admin
     startCommand: npm run start:admin
+    envVarGroups:
+      - lrc-shared-env
     envVars:
-      - key: NODE_ENV
-        value: production
       - key: ADMIN_PORT
         value: "3003"
-      - key: DATABASE_HOST
-        fromDatabase:
-          name: lrc-postgres
-          property: host
-      - key: DATABASE_PORT
-        fromDatabase:
-          name: lrc-postgres
-          property: port
-      - key: DATABASE_USER
-        fromDatabase:
-          name: lrc-postgres
-          property: user
-      - key: DATABASE_PASSWORD
-        fromDatabase:
-          name: lrc-postgres
-          property: password
-      - key: DATABASE_NAME
-        fromDatabase:
-          name: lrc-postgres
-          property: database
-      - key: JWT_SECRET
-        sync: false
-      - key: JWT_EXPIRE_AT
-        value: "3600"
+      - key: PORT
+        value: "3003"
 
   - type: web
     name: jrs-service
@@ -97,32 +95,8 @@ services:
     rootDir: .
     buildCommand: pnpm install --frozen-lockfile && pnpm run build:jrs
     startCommand: npm run start:jrs
+    envVarGroups:
+      - lrc-shared-env
     envVars:
-      - key: NODE_ENV
-        value: production
       - key: PORT
         value: "3004"
-      - key: DATABASE_HOST
-        fromDatabase:
-          name: lrc-postgres
-          property: host
-      - key: DATABASE_PORT
-        fromDatabase:
-          name: lrc-postgres
-          property: port
-      - key: DATABASE_USER
-        fromDatabase:
-          name: lrc-postgres
-          property: user
-      - key: DATABASE_PASSWORD
-        fromDatabase:
-          name: lrc-postgres
-          property: password
-      - key: DATABASE_NAME
-        fromDatabase:
-          name: lrc-postgres
-          property: database
-      - key: JWT_SECRET
-        sync: false
-      - key: JWT_EXPIRE_AT
-        value: "3600"
