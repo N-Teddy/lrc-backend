@@ -11,7 +11,7 @@ export class AddCentreRenewalAndActivityFields1778946504000 implements Migration
 
     // Add status and lock fields to activities
     await queryRunner.query(
-      `CREATE TYPE "jrs"."activities_status_enum" AS ENUM('PROGRAMMED', 'CANCELLED', 'POSTPONED', 'COMPLETED')`,
+      `DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'activities_status_enum') THEN CREATE TYPE "jrs"."activities_status_enum" AS ENUM('PROGRAMMED', 'CANCELLED', 'POSTPONED', 'COMPLETED'); END IF; END $$;`,
     );
     await queryRunner.query(
       `ALTER TABLE "jrs"."activities" ADD "status" "jrs"."activities_status_enum" NOT NULL DEFAULT 'PROGRAMMED'`,

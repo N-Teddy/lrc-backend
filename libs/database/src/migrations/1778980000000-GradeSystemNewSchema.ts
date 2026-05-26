@@ -71,7 +71,11 @@ export class GradeSystemNewSchema1778980000000 implements MigrationInterface {
 
     // Create activity_eligibility_rules table
     await queryRunner.query(`
-      CREATE TYPE "core"."activity_eligibility_rules_activitytype_enum" AS ENUM('MONTHLY_MEETING', 'CONFERENCE', 'SERVICE', 'RECREATIONAL', 'SEMAINE', 'JPO')
+      DO $$ BEGIN
+        IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'activity_eligibility_rules_activitytype_enum') THEN
+          DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'activity_eligibility_rules_activitytype_enum') THEN CREATE TYPE "core"."activity_eligibility_rules_activitytype_enum" AS ENUM('MONTHLY_MEETING', 'CONFERENCE', 'SERVICE', 'RECREATIONAL', 'SEMAINE', 'JPO'); END IF; END $$;;
+        END IF;
+      END $$;
     `);
 
     await queryRunner.query(`
@@ -170,7 +174,11 @@ export class GradeSystemNewSchema1778980000000 implements MigrationInterface {
 
     // Create ActivityScope enum type
     await queryRunner.query(`
-      CREATE TYPE "jrs"."activities_scope_enum" AS ENUM('TOWN', 'COUNTRY')
+      DO $$ BEGIN
+        IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'activities_scope_enum') THEN
+          DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'activities_scope_enum') THEN CREATE TYPE "jrs"."activities_scope_enum" AS ENUM('TOWN', 'COUNTRY'); END IF; END $$;;
+        END IF;
+      END $$;
     `);
 
     // Update JrsActivity table - add new columns

@@ -14,7 +14,7 @@ export class InitialSchema1778934051985 implements MigrationInterface {
       `CREATE TABLE "core"."app_roles" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "created_at" TIMESTAMP NOT NULL DEFAULT now(), "updated_at" TIMESTAMP NOT NULL DEFAULT now(), "created_by" character varying, "updated_by" character varying, "app_profile_id" uuid NOT NULL, "role_name" character varying NOT NULL, CONSTRAINT "UQ_084525d4e6c5ea2e516938b73be" UNIQUE ("app_profile_id", "role_name"), CONSTRAINT "PK_1dab358fe21b705367e3a7194c0" PRIMARY KEY ("id"))`,
     );
     await queryRunner.query(
-      `CREATE TYPE "core"."app_profiles_app_code_enum" AS ENUM('AUTH', 'ADMIN', 'JRS', 'FINANCE')`,
+      `DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'app_profiles_app_code_enum') THEN CREATE TYPE "core"."app_profiles_app_code_enum" AS ENUM('AUTH', 'ADMIN', 'JRS', 'FINANCE'); END IF; END $$;`,
     );
     await queryRunner.query(
       `CREATE TABLE "core"."app_profiles" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "created_at" TIMESTAMP NOT NULL DEFAULT now(), "updated_at" TIMESTAMP NOT NULL DEFAULT now(), "created_by" character varying, "updated_by" character varying, "user_id" uuid NOT NULL, "app_code" "core"."app_profiles_app_code_enum" NOT NULL, "is_active" boolean NOT NULL DEFAULT true, CONSTRAINT "UQ_e7346aa5fd0827b8af750ebaec3" UNIQUE ("user_id", "app_code"), CONSTRAINT "PK_8aa6ebbe1ff7eedc03daf4dc217" PRIMARY KEY ("id"))`,
@@ -23,25 +23,25 @@ export class InitialSchema1778934051985 implements MigrationInterface {
       `CREATE TABLE "core"."users" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "created_at" TIMESTAMP NOT NULL DEFAULT now(), "updated_at" TIMESTAMP NOT NULL DEFAULT now(), "created_by" character varying, "updated_by" character varying, "person_id" uuid NOT NULL, "password_hash" text, "is_email_verified" boolean NOT NULL DEFAULT false, "is_whatsapp_verified" boolean NOT NULL DEFAULT false, "last_login" TIMESTAMP, "password_reset_token" text, "password_reset_expires" TIMESTAMP WITH TIME ZONE, "is_first_login" boolean NOT NULL DEFAULT true, "invite_token" text, "invite_token_expires" TIMESTAMP WITH TIME ZONE, CONSTRAINT "REL_5ed72dcd00d6e5a88c6a6ba3d1" UNIQUE ("person_id"), CONSTRAINT "PK_a3ffb1c0c8416b9fc6f907b7433" PRIMARY KEY ("id"))`,
     );
     await queryRunner.query(
-      `CREATE TYPE "core"."persons_gender_enum" AS ENUM('MALE', 'FEMALE', 'OTHER')`,
+      `DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'persons_gender_enum') THEN CREATE TYPE "core"."persons_gender_enum" AS ENUM('MALE', 'FEMALE', 'OTHER'); END IF; END $$;`,
     );
     await queryRunner.query(
-      `CREATE TYPE "core"."persons_status_enum" AS ENUM('ALIVE', 'DEAD')`,
+      `DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'persons_status_enum') THEN CREATE TYPE "core"."persons_status_enum" AS ENUM('ALIVE', 'DEAD'); END IF; END $$;`,
     );
     await queryRunner.query(
       `CREATE TABLE "core"."persons" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "created_at" TIMESTAMP NOT NULL DEFAULT now(), "updated_at" TIMESTAMP NOT NULL DEFAULT now(), "created_by" character varying, "updated_by" character varying, "full_name" character varying NOT NULL, "email" character varying NOT NULL, "phone" character varying, "gender" "core"."persons_gender_enum" NOT NULL DEFAULT 'OTHER', "date_of_birth" date, "picture" character varying, "status" "core"."persons_status_enum" NOT NULL DEFAULT 'ALIVE', "is_archived" boolean NOT NULL DEFAULT false, "grade" character varying, "town_id" uuid, "country_id" uuid, CONSTRAINT "UQ_928155276ca8852f3c440cc2b2c" UNIQUE ("email"), CONSTRAINT "UQ_6545fa46b808c5870a6b27a3adf" UNIQUE ("phone"), CONSTRAINT "PK_74278d8812a049233ce41440ac7" PRIMARY KEY ("id"))`,
     );
     await queryRunner.query(
-      `CREATE TYPE "notifications"."notifications_type_enum" AS ENUM('PASSWORD_RESET', 'EMAIL_VERIFICATION', 'WELCOME', 'ALERT', 'REMINDER', 'SYSTEM', 'ATTENDANCE_ALERT', 'JRS_MEMBER_CREATED', 'JRS_MEMBER_ARCHIVED', 'JRS_MEMBER_PROMOTED_PC', 'JRS_MEMBER_PROMOTED_AP', 'JRS_MEMBER_DEMOTED_PC', 'JRS_MEMBER_DEMOTED_AP', 'INVITE')`,
+      `DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'notifications_type_enum') THEN CREATE TYPE "notifications"."notifications_type_enum" AS ENUM('PASSWORD_RESET', 'EMAIL_VERIFICATION', 'WELCOME', 'ALERT', 'REMINDER', 'SYSTEM', 'ATTENDANCE_ALERT', 'JRS_MEMBER_CREATED', 'JRS_MEMBER_ARCHIVED', 'JRS_MEMBER_PROMOTED_PC', 'JRS_MEMBER_PROMOTED_AP', 'JRS_MEMBER_DEMOTED_PC', 'JRS_MEMBER_DEMOTED_AP', 'INVITE'); END IF; END $$;`,
     );
     await queryRunner.query(
-      `CREATE TYPE "notifications"."notifications_priority_enum" AS ENUM('LOW', 'MEDIUM', 'HIGH', 'CRITICAL')`,
+      `DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'notifications_priority_enum') THEN CREATE TYPE "notifications"."notifications_priority_enum" AS ENUM('LOW', 'MEDIUM', 'HIGH', 'CRITICAL'); END IF; END $$;`,
     );
     await queryRunner.query(
-      `CREATE TYPE "notifications"."notifications_channel_enum" AS ENUM('IN_APP', 'EMAIL', 'WHATSAPP')`,
+      `DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'notifications_channel_enum') THEN CREATE TYPE "notifications"."notifications_channel_enum" AS ENUM('IN_APP', 'EMAIL', 'WHATSAPP'); END IF; END $$;`,
     );
     await queryRunner.query(
-      `CREATE TYPE "notifications"."notifications_status_enum" AS ENUM('PENDING', 'SENT', 'FAILED', 'READ', 'DISMISSED')`,
+      `DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'notifications_status_enum') THEN CREATE TYPE "notifications"."notifications_status_enum" AS ENUM('PENDING', 'SENT', 'FAILED', 'READ', 'DISMISSED'); END IF; END $$;`,
     );
     await queryRunner.query(
       `CREATE TABLE "notifications"."notifications" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "created_at" TIMESTAMP NOT NULL DEFAULT now(), "updated_at" TIMESTAMP NOT NULL DEFAULT now(), "created_by" character varying, "updated_by" character varying, "recipientId" uuid NOT NULL, "type" "notifications"."notifications_type_enum" NOT NULL, "priority" "notifications"."notifications_priority_enum" NOT NULL DEFAULT 'MEDIUM', "channel" "notifications"."notifications_channel_enum" NOT NULL, "status" "notifications"."notifications_status_enum" NOT NULL DEFAULT 'PENDING', "title" character varying NOT NULL, "body" text NOT NULL, "data" jsonb, "action_url" character varying, "image_url" character varying, "related_entity_id" uuid, "scheduled_at" TIMESTAMP WITH TIME ZONE, "sent_at" TIMESTAMP WITH TIME ZONE, "read_at" TIMESTAMP WITH TIME ZONE, "dismissed_at" TIMESTAMP WITH TIME ZONE, "failure_reason" text, "retry_count" integer NOT NULL DEFAULT '0', "external_id" character varying, "recipient_id" uuid, CONSTRAINT "PK_6a72c3c0f683f6462415e653c3a" PRIMARY KEY ("id"))`,
@@ -59,7 +59,7 @@ export class InitialSchema1778934051985 implements MigrationInterface {
       `CREATE INDEX "IDX_b29ed915396673611a0f3a46a9" ON "logs"."system_logs" ("timestamp") `,
     );
     await queryRunner.query(
-      `CREATE TYPE "logs"."audit_logs_action_enum" AS ENUM('CREATE', 'UPDATE', 'DELETE', 'LOGIN', 'REGISTER', 'OTHER')`,
+      `DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'audit_logs_action_enum') THEN CREATE TYPE "logs"."audit_logs_action_enum" AS ENUM('CREATE', 'UPDATE', 'DELETE', 'LOGIN', 'REGISTER', 'OTHER'); END IF; END $$;`,
     );
     await queryRunner.query(
       `CREATE TABLE "logs"."audit_logs" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "user_id" character varying, "action" "logs"."audit_logs_action_enum" NOT NULL DEFAULT 'OTHER', "entity" character varying NOT NULL, "route" character varying, "method" character varying NOT NULL, "service_name" character varying NOT NULL, "request_body" jsonb, "request_headers" jsonb, "ip_address" character varying, "user_agent" character varying, "created_at" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "PK_1bb179d048bbc581caa3b013439" PRIMARY KEY ("id"))`,
@@ -71,13 +71,13 @@ export class InitialSchema1778934051985 implements MigrationInterface {
       `CREATE INDEX "IDX_2cd10fda8276bb995288acfbfb" ON "logs"."audit_logs" ("created_at") `,
     );
     await queryRunner.query(
-      `CREATE TYPE "jrs"."members_status_enum" AS ENUM('ACTIVE', 'INACTIVE', 'LEFT')`,
+      `DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'members_status_enum') THEN CREATE TYPE "jrs"."members_status_enum" AS ENUM('ACTIVE', 'INACTIVE', 'LEFT'); END IF; END $$;`,
     );
     await queryRunner.query(
       `CREATE TABLE "jrs"."members" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "created_at" TIMESTAMP NOT NULL DEFAULT now(), "updated_at" TIMESTAMP NOT NULL DEFAULT now(), "created_by" character varying, "updated_by" character varying, "person_id" uuid NOT NULL, "join_date" date NOT NULL, "status" "jrs"."members_status_enum" NOT NULL DEFAULT 'ACTIVE', "is_pc" boolean NOT NULL DEFAULT false, "is_ap" boolean NOT NULL DEFAULT false, "has_system_access" boolean NOT NULL DEFAULT false, CONSTRAINT "UQ_04270b96d66a1968c4e88442330" UNIQUE ("person_id"), CONSTRAINT "PK_28b53062261b996d9c99fa12404" PRIMARY KEY ("id"))`,
     );
     await queryRunner.query(
-      `CREATE TYPE "jrs"."activities_activitytype_enum" AS ENUM('MONTHLY_MEETING', 'CONFERENCE', 'SERVICE', 'RECREATIONAL')`,
+      `DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'activities_activitytype_enum') THEN CREATE TYPE "jrs"."activities_activitytype_enum" AS ENUM('MONTHLY_MEETING', 'CONFERENCE', 'SERVICE', 'RECREATIONAL'); END IF; END $$;`,
     );
     await queryRunner.query(
       `CREATE TABLE "jrs"."activities" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "created_at" TIMESTAMP NOT NULL DEFAULT now(), "updated_at" TIMESTAMP NOT NULL DEFAULT now(), "created_by" character varying, "updated_by" character varying, "town_id" uuid NOT NULL, "title" character varying NOT NULL, "description" character varying, "activityType" "jrs"."activities_activitytype_enum" NOT NULL, "location" character varying, "start_date" TIMESTAMP WITH TIME ZONE NOT NULL, "end_date" TIMESTAMP WITH TIME ZONE, "is_conference" boolean NOT NULL DEFAULT false, CONSTRAINT "PK_7f4004429f731ffb9c88eb486a8" PRIMARY KEY ("id"))`,

@@ -6,7 +6,7 @@ export class AddActivityScopeFields1778975000000 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     // Add activity scope enum
     await queryRunner.query(
-      `CREATE TYPE "jrs"."activities_scope_enum" AS ENUM('TOWN', 'COUNTRY')`,
+      `DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'activities_scope_enum') THEN CREATE TYPE "jrs"."activities_scope_enum" AS ENUM('TOWN', 'COUNTRY'); END IF; END $$;`,
     );
 
     // Add country_id column
