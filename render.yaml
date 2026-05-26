@@ -1,9 +1,10 @@
-services:
-  - type: pgsql
-    name: lrc-postgres
+databases:
+  - name: lrc-postgres
     region: oregon
     plan: starter
+    databaseName: lrc_db
 
+services:
   - type: web
     name: auth-service
     region: oregon
@@ -13,19 +14,42 @@ services:
     buildCommand: pnpm install --frozen-lockfile && pnpm run build:auth
     startCommand: npm run start:auth
     envVars:
-      NODE_ENV: production
-      PORT: 3001
-      DATABASE_HOST: ${lrc-postgres.host}
-      DATABASE_PORT: ${lrc-postgres.port}
-      DATABASE_USER: ${lrc-postgres.user}
-      DATABASE_PASSWORD: ${lrc-postgres.password}
-      DATABASE_NAME: lrc_db
-      JWT_SECRET: ${JWT_SECRET}
-      JWT_EXPIRE_AT: 3600
-      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET}
-      JWT_REFRESH_EXPIRE_AT: 86400
-      JWT_RESET_SECRET: ${JWT_RESET_SECRET}
-      JWT_RESET_EXPIRE_AT: 3600
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: "3001"
+      - key: DATABASE_HOST
+        fromDatabase:
+          name: lrc-postgres
+          property: host
+      - key: DATABASE_PORT
+        fromDatabase:
+          name: lrc-postgres
+          property: port
+      - key: DATABASE_USER
+        fromDatabase:
+          name: lrc-postgres
+          property: user
+      - key: DATABASE_PASSWORD
+        fromDatabase:
+          name: lrc-postgres
+          property: password
+      - key: DATABASE_NAME
+        fromDatabase:
+          name: lrc-postgres
+          property: database
+      - key: JWT_SECRET
+        sync: false
+      - key: JWT_EXPIRE_AT
+        value: "3600"
+      - key: JWT_REFRESH_SECRET
+        sync: false
+      - key: JWT_REFRESH_EXPIRE_AT
+        value: "86400"
+      - key: JWT_RESET_SECRET
+        sync: false
+      - key: JWT_RESET_EXPIRE_AT
+        value: "3600"
 
   - type: web
     name: admin-service
@@ -36,15 +60,34 @@ services:
     buildCommand: pnpm install --frozen-lockfile && pnpm run build:admin
     startCommand: npm run start:admin
     envVars:
-      NODE_ENV: production
-      ADMIN_PORT: 3003
-      DATABASE_HOST: ${lrc-postgres.host}
-      DATABASE_PORT: ${lrc-postgres.port}
-      DATABASE_USER: ${lrc-postgres.user}
-      DATABASE_PASSWORD: ${lrc-postgres.password}
-      DATABASE_NAME: lrc_db
-      JWT_SECRET: ${JWT_SECRET}
-      JWT_EXPIRE_AT: 3600
+      - key: NODE_ENV
+        value: production
+      - key: ADMIN_PORT
+        value: "3003"
+      - key: DATABASE_HOST
+        fromDatabase:
+          name: lrc-postgres
+          property: host
+      - key: DATABASE_PORT
+        fromDatabase:
+          name: lrc-postgres
+          property: port
+      - key: DATABASE_USER
+        fromDatabase:
+          name: lrc-postgres
+          property: user
+      - key: DATABASE_PASSWORD
+        fromDatabase:
+          name: lrc-postgres
+          property: password
+      - key: DATABASE_NAME
+        fromDatabase:
+          name: lrc-postgres
+          property: database
+      - key: JWT_SECRET
+        sync: false
+      - key: JWT_EXPIRE_AT
+        value: "3600"
 
   - type: web
     name: jrs-service
@@ -55,12 +98,31 @@ services:
     buildCommand: pnpm install --frozen-lockfile && pnpm run build:jrs
     startCommand: npm run start:jrs
     envVars:
-      NODE_ENV: production
-      PORT: 3004
-      DATABASE_HOST: ${lrc-postgres.host}
-      DATABASE_PORT: ${lrc-postgres.port}
-      DATABASE_USER: ${lrc-postgres.user}
-      DATABASE_PASSWORD: ${lrc-postgres.password}
-      DATABASE_NAME: lrc_db
-      JWT_SECRET: ${JWT_SECRET}
-      JWT_EXPIRE_AT: 3600
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: "3004"
+      - key: DATABASE_HOST
+        fromDatabase:
+          name: lrc-postgres
+          property: host
+      - key: DATABASE_PORT
+        fromDatabase:
+          name: lrc-postgres
+          property: port
+      - key: DATABASE_USER
+        fromDatabase:
+          name: lrc-postgres
+          property: user
+      - key: DATABASE_PASSWORD
+        fromDatabase:
+          name: lrc-postgres
+          property: password
+      - key: DATABASE_NAME
+        fromDatabase:
+          name: lrc-postgres
+          property: database
+      - key: JWT_SECRET
+        sync: false
+      - key: JWT_EXPIRE_AT
+        value: "3600"
