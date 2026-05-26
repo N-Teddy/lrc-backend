@@ -1,0 +1,5 @@
+export enum JeunesActivityType {
+  JEUNES_ACTIVITY = 'JEUNES_ACTIVITY',
+  JEUNES_OUTING = 'JEUNES_OUTING',
+  JEUNES_CAMP = 'JEUNES_CAMP',
+}

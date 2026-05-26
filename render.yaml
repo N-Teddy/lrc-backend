@@ -1,0 +1,66 @@
+services:
+  - type: pgsql
+    name: lrc-postgres
+    region: oregon
+    plan: starter
+
+  - type: web
+    name: auth-service
+    region: oregon
+    plan: starter
+    runtime: node
+    rootDir: .
+    buildCommand: pnpm install --frozen-lockfile && pnpm run build:auth
+    startCommand: npm run start:auth
+    envVars:
+      NODE_ENV: production
+      PORT: 3001
+      DATABASE_HOST: ${lrc-postgres.host}
+      DATABASE_PORT: ${lrc-postgres.port}
+      DATABASE_USER: ${lrc-postgres.user}
+      DATABASE_PASSWORD: ${lrc-postgres.password}
+      DATABASE_NAME: lrc_db
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_EXPIRE_AT: 3600
+      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET}
+      JWT_REFRESH_EXPIRE_AT: 86400
+      JWT_RESET_SECRET: ${JWT_RESET_SECRET}
+      JWT_RESET_EXPIRE_AT: 3600
+
+  - type: web
+    name: admin-service
+    region: oregon
+    plan: starter
+    runtime: node
+    rootDir: .
+    buildCommand: pnpm install --frozen-lockfile && pnpm run build:admin
+    startCommand: npm run start:admin
+    envVars:
+      NODE_ENV: production
+      ADMIN_PORT: 3003
+      DATABASE_HOST: ${lrc-postgres.host}
+      DATABASE_PORT: ${lrc-postgres.port}
+      DATABASE_USER: ${lrc-postgres.user}
+      DATABASE_PASSWORD: ${lrc-postgres.password}
+      DATABASE_NAME: lrc_db
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_EXPIRE_AT: 3600
+
+  - type: web
+    name: jrs-service
+    region: oregon
+    plan: starter
+    runtime: node
+    rootDir: .
+    buildCommand: pnpm install --frozen-lockfile && pnpm run build:jrs
+    startCommand: npm run start:jrs
+    envVars:
+      NODE_ENV: production
+      PORT: 3004
+      DATABASE_HOST: ${lrc-postgres.host}
+      DATABASE_PORT: ${lrc-postgres.port}
+      DATABASE_USER: ${lrc-postgres.user}
+      DATABASE_PASSWORD: ${lrc-postgres.password}
+      DATABASE_NAME: lrc_db
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_EXPIRE_AT: 3600

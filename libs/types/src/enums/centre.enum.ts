@@ -1,0 +1,5 @@
+export enum CentreActivityType {
+  CONFERENCE = 'CONFERENCE',
+  MILIEUX_DE_MOIS = 'MILIEUX_DE_MOIS',
+  CENTRE_ACTIVITY = 'CENTRE_ACTIVITY',
+}
