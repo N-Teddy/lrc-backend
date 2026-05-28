@@ -137,7 +137,7 @@ services:
     startCommand: npm run start:jrs
     envVars:
       - key: PORT
-        value: "3004"
+        value: "3002"
       - key: NODE_ENV
         value: production
       - key: DATABASE_HOST
