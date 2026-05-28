@@ -71,11 +71,7 @@ export class GradeSystemNewSchema1778980000000 implements MigrationInterface {
 
     // Create activity_eligibility_rules table
     await queryRunner.query(`
-      DO $$ BEGIN
-        IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'activity_eligibility_rules_activitytype_enum') THEN
-          DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'activity_eligibility_rules_activitytype_enum') THEN CREATE TYPE "core"."activity_eligibility_rules_activitytype_enum" AS ENUM('MONTHLY_MEETING', 'CONFERENCE', 'SERVICE', 'RECREATIONAL', 'SEMAINE', 'JPO'); END IF; END $$;;
-        END IF;
-      END $$;
+      CREATE TYPE IF NOT EXISTS "core"."activity_eligibility_rules_activitytype_enum" AS ENUM('MONTHLY_MEETING', 'CONFERENCE', 'SERVICE', 'RECREATIONAL', 'SEMAINE', 'JPO')
     `);
 
     await queryRunner.query(`
@@ -174,11 +170,7 @@ export class GradeSystemNewSchema1778980000000 implements MigrationInterface {
 
     // Create ActivityScope enum type
     await queryRunner.query(`
-      DO $$ BEGIN
-        IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'activities_scope_enum') THEN
-          DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'activities_scope_enum') THEN CREATE TYPE "jrs"."activities_scope_enum" AS ENUM('TOWN', 'COUNTRY'); END IF; END $$;;
-        END IF;
-      END $$;
+      CREATE TYPE IF NOT EXISTS "jrs"."activities_scope_enum" AS ENUM('TOWN', 'COUNTRY')
     `);
 
     // Update JrsActivity table - add new columns
@@ -256,12 +248,12 @@ export class GradeSystemNewSchema1778980000000 implements MigrationInterface {
     );
 
     // Drop enum type
-    await queryRunner.query(`DROP TYPE "jrs"."activities_scope_enum"`);
+    await queryRunner.query(`DROP TYPE IF EXISTS "jrs"."activities_scope_enum"`);
 
     // Drop tables
     await queryRunner.query(`DROP TABLE "core"."activity_eligibility_rules"`);
     await queryRunner.query(
-      `DROP TYPE "core"."activity_eligibility_rules_activitytype_enum"`,
+      `DROP TYPE IF EXISTS "core"."activity_eligibility_rules_activitytype_enum"`,
     );
     await queryRunner.query(`DROP TABLE "core"."jeunes_members"`);
     await queryRunner.query(`DROP TABLE "core"."jeunes_groups"`);
