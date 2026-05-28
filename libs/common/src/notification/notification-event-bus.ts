@@ -12,7 +12,7 @@ export class NotificationEventBus extends EventEmitter {
 
   on(
     event: 'notification.sent',
-    listener: (notification: Notification) => void,
+    listener: (...args: unknown[]) => void,
   ): this;
   on(event: string, listener: (...args: unknown[]) => void): this;
   override on(event: string, listener: (...args: unknown[]) => void): this {
