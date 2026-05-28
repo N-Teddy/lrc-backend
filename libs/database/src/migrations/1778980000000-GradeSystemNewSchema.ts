@@ -71,7 +71,7 @@ export class GradeSystemNewSchema1778980000000 implements MigrationInterface {
 
     // Create activity_eligibility_rules table
     await queryRunner.query(`
-      CREATE TYPE IF NOT EXISTS "core"."activity_eligibility_rules_activitytype_enum" AS ENUM('MONTHLY_MEETING', 'CONFERENCE', 'SERVICE', 'RECREATIONAL', 'SEMAINE', 'JPO')
+      DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'activity_eligibility_rules_activitytype_enum') THEN CREATE TYPE "core"."activity_eligibility_rules_activitytype_enum" AS ENUM('MONTHLY_MEETING', 'CONFERENCE', 'SERVICE', 'RECREATIONAL', 'SEMAINE', 'JPO'); END IF; END $$;
     `);
 
     await queryRunner.query(`
@@ -168,28 +168,6 @@ export class GradeSystemNewSchema1778980000000 implements MigrationInterface {
       CREATE INDEX "IDX_jeunes_members_group_id" ON "core"."jeunes_members" ("jeunes_group_id")
     `);
 
-    // Create ActivityScope enum type
-    await queryRunner.query(`
-      CREATE TYPE IF NOT EXISTS "jrs"."activities_scope_enum" AS ENUM('TOWN', 'COUNTRY')
-    `);
-
-    // Update JrsActivity table - add new columns
-    await queryRunner.query(`
-      ALTER TABLE "jrs"."activities" ADD COLUMN IF NOT EXISTS "country_id" UUID,
-      ADD COLUMN IF NOT EXISTS "originating_centre_id" UUID,
-      ADD COLUMN IF NOT EXISTS "scope" "jrs"."activities_scope_enum" DEFAULT 'TOWN'
-    `);
-
-    // Update activities to make town_id nullable
-    await queryRunner.query(`
-      ALTER TABLE "jrs"."activities" ALTER COLUMN "town_id" DROP NOT NULL
-    `);
-
-    await queryRunner.query(`
-      ALTER TABLE "jrs"."activities" ADD CONSTRAINT "FK_activities_country_id"
-      FOREIGN KEY ("country_id") REFERENCES "core"."countries"("id")
-    `);
-
     // Add foreign keys for jeunes_members
     await queryRunner.query(`
       ALTER TABLE "core"."grade_levels" ADD CONSTRAINT "FK_grade_levels_category_id"
@@ -205,6 +183,12 @@ export class GradeSystemNewSchema1778980000000 implements MigrationInterface {
       ALTER TABLE "core"."jeunes_members" ADD CONSTRAINT "FK_jeunes_members_group_id"
       FOREIGN KEY ("jeunes_group_id") REFERENCES "core"."jeunes_groups"("id")
     `);
+
+    // Add country_id FK to activities (if not exists)
+    await queryRunner.query(`
+      ALTER TABLE "jrs"."activities" ADD CONSTRAINT "FK_activities_country_id"
+      FOREIGN KEY ("country_id") REFERENCES "core"."countries"("id")
+    `);
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
@@ -219,9 +203,6 @@ export class GradeSystemNewSchema1778980000000 implements MigrationInterface {
       `ALTER TABLE "core"."grade_levels" DROP CONSTRAINT "FK_grade_levels_category_id"`,
     );
     await queryRunner.query(
-      `ALTER TABLE "jrs"."activities" DROP CONSTRAINT "FK_activities_country_id"`,
-    );
-    await queryRunner.query(
       `ALTER TABLE "core"."persons" DROP CONSTRAINT "FK_persons_grade_level_id"`,
     );
 
@@ -233,27 +214,10 @@ export class GradeSystemNewSchema1778980000000 implements MigrationInterface {
     );
     await queryRunner.query(`DROP INDEX "core"."IDX_grade_levels_category_id"`);
 
-    // Remove new columns from activities
-    await queryRunner.query(
-      `ALTER TABLE "jrs"."activities" DROP COLUMN "scope"`,
-    );
-    await queryRunner.query(
-      `ALTER TABLE "jrs"."activities" DROP COLUMN "originating_centre_id"`,
-    );
-    await queryRunner.query(
-      `ALTER TABLE "jrs"."activities" DROP COLUMN "country_id"`,
-    );
-    await queryRunner.query(
-      `ALTER TABLE "jrs"."activities" ALTER COLUMN "town_id" SET NOT NULL`,
-    );
-
-    // Drop enum type
-    await queryRunner.query(`DROP TYPE IF EXISTS "jrs"."activities_scope_enum"`);
-
     // Drop tables
     await queryRunner.query(`DROP TABLE "core"."activity_eligibility_rules"`);
     await queryRunner.query(
-      `DROP TYPE IF EXISTS "core"."activity_eligibility_rules_activitytype_enum"`,
+      `DROP TYPE "core"."activity_eligibility_rules_activitytype_enum"`,
     );
     await queryRunner.query(`DROP TABLE "core"."jeunes_members"`);
     await queryRunner.query(`DROP TABLE "core"."jeunes_groups"`);
