@@ -1,3 +1,4 @@
+import { join } from 'path';
 import { Module, Logger, OnModuleInit } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
@@ -60,7 +61,7 @@ import { CommonModule } from '@app/common';
         ],
         autoLoadEntities: true,
         synchronize: false,
-        migrations: ['dist/libs/database/src/migrations/*.js'],
+        migrations: [join(__dirname, 'migrations', '*.js')],
         migrationsRun: true,
       }),
       inject: [ConfigService],
